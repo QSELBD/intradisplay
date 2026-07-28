@@ -1,0 +1,2 @@
+# intradisplay
+Affichage dynamique entreprise
