@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "titre": "Bienvenue sur GAM Display",
+    "categorie": "Information interne",
+    "texte": "Le nouvel outil d'affichage dynamique de Grenoble Alpes Métropole est en cours de création.",
+    "image": "../assets/images/Aquapole_001.JPG",
+    "date": "2026-01-01"
+  },
+  {
+    "id": 2,
+    "titre": "Sécurité",
+    "categorie": "Prévention",
+    "texte": "Pensez à porter vos équipements de protection individuelle lors de vos interventions.",
+    "image": "../assets/images/actu1.jpg",
+    "date": "2026-01-02"
+  }
+]
