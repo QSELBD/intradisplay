@@ -2,11 +2,18 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>GAM Display</title>
 
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <link
+        rel="stylesheet"
+        href="../assets/css/style.css"
+    >
 </head>
 
 <body>
@@ -14,26 +21,41 @@
     <main class="screen">
 
         <header class="header">
+
             <img
                 class="logo"
                 src="../assets/images/logo.png"
                 alt="Grenoble Alpes Métropole"
             >
 
-            <h1 class="header-title">Actualités</h1>
+            <h1 class="header-title">
+                Actualités
+            </h1>
 
-            <div class="clock" id="clock">--:--</div>
+            <div
+                class="clock"
+                id="clock"
+            >
+                --:--
+            </div>
+
         </header>
 
         <section class="news">
 
-            <div class="news-visual" id="news-image">
+            <div
+                class="news-visual"
+                id="news-image"
+            >
 
                 <div class="news-overlay"></div>
 
                 <div class="news-content">
 
-                    <p class="news-category" id="news-category">
+                    <p
+                        class="news-category"
+                        id="news-category"
+                    >
                         Chargement...
                     </p>
 
@@ -41,11 +63,16 @@
                         Chargement de l’actualité
                     </h2>
 
-                    <p class="news-text" id="news-text">
+                    <p
+                        class="news-text"
+                        id="news-text"
+                    >
                         Merci de patienter.
                     </p>
 
                 </div>
+
+                <div class="news-pagination" id="news-pagination"></div>
 
             </div>
 
@@ -59,7 +86,10 @@
 
                 <div>
                     <strong id="safety-days">245</strong>
-                    <span>jours sans accident du travail</span>
+
+                    <span>
+                        jours sans accident du travail
+                    </span>
                 </div>
 
             </div>
@@ -70,6 +100,9 @@
 
     </main>
 
+    <script src="../assets/js/clock.js"></script>
+    <script src="../assets/js/ui.js"></script>
+    <script src="../assets/js/slideshow.js"></script>
     <script src="../assets/js/app.js"></script>
 
 </body>

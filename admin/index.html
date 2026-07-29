@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Administration — GAM Display</title>
+
+    <link
+        rel="stylesheet"
+        href="../assets/css/admin.css"
+    >
+</head>
+
+<body>
+
+    <header class="admin-header">
+
+        <div class="brand">
+            <img
+                src="../assets/images/logo.png"
+                alt="Grenoble Alpes Métropole"
+            >
+
+            <div>
+                <p>Grenoble Alpes Métropole</p>
+                <h1>Administration GAM Display</h1>
+            </div>
+        </div>
+
+        <a
+            class="display-link"
+            href="../display/index.html"
+            target="_blank"
+        >
+            Ouvrir l’affichage
+        </a>
+
+    </header>
+
+    <main class="admin-layout">
+
+        <section class="editor-panel">
+
+            <div class="panel-title">
+                <div>
+                    <p class="eyebrow">Éditeur</p>
+                    <h2 id="form-heading">
+                        Ajouter une actualité
+                    </h2>
+                </div>
+            </div>
+
+            <form id="news-form">
+
+                <input
+                    type="hidden"
+                    id="news-id"
+                >
+
+                <label for="news-category-input">
+                    Catégorie
+                </label>
+
+                <input
+                    id="news-category-input"
+                    type="text"
+                    placeholder="Exemple : Information interne"
+                    required
+                >
+
+                <label for="news-title-input">
+                    Titre
+                </label>
+
+                <input
+                    id="news-title-input"
+                    type="text"
+                    placeholder="Titre de l’actualité"
+                    required
+                >
+
+                <label for="news-text-input">
+                    Texte
+                </label>
+
+                <textarea
+                    id="news-text-input"
+                    rows="5"
+                    placeholder="Texte affiché sous le titre"
+                    required
+                ></textarea>
+
+                <label for="news-image-input">
+                    Image
+                </label>
+
+                <input
+                    id="news-image-input"
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp"
+                >
+
+                <p class="field-help">
+                    Laissez ce champ vide pour conserver
+                    l’image actuelle lors d’une modification.
+                </p>
+
+                <div
+                    class="image-preview"
+                    id="image-preview"
+                >
+                    Aucune image sélectionnée
+                </div>
+
+                <div class="form-actions">
+
+                    <button
+                        class="primary-button"
+                        type="submit"
+                    >
+                        Enregistrer
+                    </button>
+
+                    <button
+                        class="secondary-button"
+                        type="button"
+                        id="cancel-edit"
+                        hidden
+                    >
+                        Annuler la modification
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+        <section class="list-panel">
+
+            <div class="panel-title">
+
+                <div>
+                    <p class="eyebrow">Diaporama</p>
+                    <h2>Actualités publiées</h2>
+                </div>
+
+                <button
+                    class="danger-outline-button"
+                    id="restore-default"
+                    type="button"
+                >
+                    Restaurer le JSON
+                </button>
+
+            </div>
+
+            <div
+                class="status-message"
+                id="status-message"
+                aria-live="polite"
+            ></div>
+
+            <div
+                class="news-list"
+                id="news-list"
+            ></div>
+
+        </section>
+
+    </main>
+
+    <script src="../assets/js/admin.js"></script>
+
+</body>
+</html>

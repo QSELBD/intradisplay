@@ -64,20 +64,51 @@ body {
         transform 0.7s ease;
 }
 
-.news.is-changing {
-    opacity: 0;
-    transform: scale(1.015);
-}
-
 .news-visual {
     position: relative;
     width: 100%;
     height: 100%;
     overflow: hidden;
     background-color: #191919;
+}
+
+.news-visual::before {
+    content: "";
+    position: absolute;
+    inset: -3%;
+    z-index: 0;
+
+    background-image: var(--news-image);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+
+    transform: scale(1);
+    transition: opacity 0.5s ease;
+    will-change: transform, opacity;
+}
+
+.news-visual.ken-burns::before {
+    animation: kenBurns 10s linear forwards;
+}
+
+.news-visual.is-changing::before {
+    opacity: 0;
+}
+
+.news-visual.is-changing .news-content {
+    opacity: 0;
+    transform: translateY(22px);
+}
+
+@keyframes kenBurns {
+    from {
+        transform: scale(1);
+    }
+
+    to {
+        transform: scale(1.09);
+    }
 }
 
 .news-overlay {
@@ -111,10 +142,6 @@ body {
         transform 0.55s ease 0.12s;
 }
 
-.news.is-changing .news-content {
-    opacity: 0;
-    transform: translateY(22px);
-}
 
 .news-category {
     display: inline-block;
@@ -220,7 +247,7 @@ body {
     .news-content {
         left: 38px;
         right: 38px;
-        bottom: 34px;
+        bottom: 70px;
     }
 
     .footer {
@@ -230,4 +257,53 @@ body {
     .footer > p {
         font-size: 17px;
     }
+}
+
+/* Pagination du diaporama */
+
+.news-pagination {
+    position: absolute;
+    left: 50%;
+    bottom: 22px;
+    z-index: 20;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    transform: translateX(-50%);
+}
+
+.news-dot {
+    display: block;
+    flex: 0 0 auto;
+
+    width: 14px;
+    height: 14px;
+    padding: 0;
+
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+
+    background: rgba(0, 0, 0, 0.55);
+    appearance: none;
+    cursor: pointer;
+
+    transition:
+        width 0.4s ease,
+        transform 0.4s ease,
+        background-color 0.4s ease,
+        border-color 0.4s ease,
+        box-shadow 0.4s ease;
+}
+
+.news-dot.active {
+    width: 46px;
+    border-color: #ffd200;
+    background: #ffd200;
+
+    box-shadow:
+        0 0 10px rgba(255, 210, 0, 1),
+        0 0 24px rgba(255, 210, 0, 0.7);
 }
