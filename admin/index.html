@@ -94,6 +94,51 @@
                     placeholder="Texte affiché sous le titre"
                     required
                 ></textarea>
+                <label for="news-duration-input">
+                    Durée d’affichage
+                </label>
+
+                <input
+                    id="news-duration-input"
+                    type="number"
+                    min="3"
+                    max="300"
+                    step="1"
+                    value="10"
+                    required
+                >
+
+                <p class="field-help">
+                    Durée en secondes, avec un minimum de 3 secondes.
+                </p>
+
+                <label class="checkbox-field">
+                    <input
+                        id="news-priority-input"
+                        type="checkbox"
+                    >
+
+                    <span>
+                        Actualité prioritaire
+                    </span>
+                </label>
+
+                <p class="field-help">
+                    Une actualité prioritaire apparaîtra deux fois dans le cycle.
+                </p>
+                <label for="news-qrcode-input">
+                    Lien QR Code
+                </label>
+
+                <input
+                    id="news-qrcode-input"
+                    type="url"
+                    placeholder="https://..."
+                >
+
+                <p class="field-help">
+                    Facultatif. Si un lien est renseigné, un QR Code sera affiché sur l'écran.
+                </p>
 
                 <label for="news-image-input">
                     Image

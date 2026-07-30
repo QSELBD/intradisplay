@@ -1,4 +1,8 @@
-document.addEventListener("DOMContentLoaded", () => {
-    startClock();
-    loadNews();
-});
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+        startClock();
+        startDateAndWeather();
+        loadNews();
+    }
+);

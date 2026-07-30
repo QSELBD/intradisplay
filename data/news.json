@@ -5,7 +5,9 @@
     "categorie": "Information interne",
     "texte": "Le nouvel outil d'affichage dynamique de Grenoble Alpes Métropole est en cours de création.",
     "image": "Aquapole_001.JPG",
-    "date": "2026-01-01"
+    "date": "2026-01-01",
+    "duree": 5,
+  "prioritaire": false
   },
   {
     "id": 2,
@@ -13,6 +15,10 @@
     "categorie": "Prévention",
     "texte": "Pensez à porter vos équipements de protection individuelle lors de vos interventions.",
     "image": "actu1.jpg",
-    "date": "2026-01-02"
+    "date": "2026-01-02",
+    "duree": 15,
+  "prioritaire": true
   }
+  
+
 ]

@@ -1,24 +1,47 @@
 let news = [];
+let displayNewsList = [];
 let currentNewsIndex = 0;
 let slideshowTimer = null;
 
-const SLIDE_DURATION = 10000;
+const DEFAULT_SLIDE_DURATION = 10000;
+const MIN_SLIDE_DURATION = 3000;
 const STORAGE_KEY = "gam-display-news";
 
-const newsVisual = document.getElementById("news-image");
-const newsCategory = document.getElementById("news-category");
-const newsTitle = document.getElementById("news-title");
-const newsText = document.getElementById("news-text");
-const newsPagination = document.getElementById("news-pagination");
+const newsVisual =
+    document.getElementById("news-image");
+
+const newsCategory =
+    document.getElementById("news-category");
+
+const newsTitle =
+    document.getElementById("news-title");
+
+const newsText =
+    document.getElementById("news-text");
+
+const newsPagination =
+    document.getElementById("news-pagination");
+
+const newsQrCodeWrapper =
+    document.getElementById(
+        "news-qrcode-wrapper"
+    );
+
+const newsQrCode =
+    document.getElementById(
+        "news-qrcode"
+    );
 
 async function loadNews() {
     try {
-        const savedNews = localStorage.getItem(STORAGE_KEY);
+        const savedNews =
+            localStorage.getItem(STORAGE_KEY);
 
         if (savedNews) {
             news = JSON.parse(savedNews);
         } else {
-            const response = await fetch("../data/news.json");
+            const response =
+                await fetch("../data/news.json");
 
             if (!response.ok) {
                 throw new Error(
@@ -29,21 +52,38 @@ async function loadNews() {
             news = await response.json();
         }
 
-        if (!Array.isArray(news) || news.length === 0) {
-            throw new Error("Aucune actualité disponible");
+        if (
+            !Array.isArray(news) ||
+            news.length === 0
+        ) {
+            throw new Error(
+                "Aucune actualité disponible"
+            );
         }
 
+        /*
+         * Création du cycle de diffusion.
+         * Une actualité prioritaire apparaît
+         * une deuxième fois.
+         */
+        displayNewsList =
+            createPriorityNewsList(news);
+
         currentNewsIndex = 0;
-        
+
         stopSlideshow();
         createPagination();
         displayNews(currentNewsIndex);
-        startSlideshow();
+        scheduleNextNews();
     } catch (error) {
         console.error(error);
 
-        newsCategory.textContent = "Erreur";
-        newsTitle.textContent = "Actualités indisponibles";
+        newsCategory.textContent =
+            "Erreur";
+
+        newsTitle.textContent =
+            "Actualités indisponibles";
+
         newsText.textContent =
             "Les actualités n’ont pas pu être chargées.";
 
@@ -52,6 +92,30 @@ async function loadNews() {
             "none"
         );
     }
+}
+
+function createPriorityNewsList(newsItems) {
+    const priorityItems = newsItems.filter(
+        (item) => isPriorityNews(item)
+    );
+
+    const normalItems = newsItems.filter(
+        (item) => !isPriorityNews(item)
+    );
+
+    return [
+        ...priorityItems,
+        ...normalItems
+    ];
+}
+
+function isPriorityNews(item) {
+    return (
+        item.prioritaire === true ||
+        item.priority === true ||
+        item.prioritaire === "true" ||
+        item.priority === "true"
+    );
 }
 
 function getImageUrl(image) {
@@ -73,29 +137,46 @@ function getImageUrl(image) {
         return image;
     }
 
-    /*
-     * Ancien format du JSON :
-     * "../assets/images/actu1.jpg"
-     */
-    if (image.startsWith("../assets/images/")) {
+    if (
+        image.startsWith(
+            "../assets/images/"
+        )
+    ) {
         return new URL(
             image,
             window.location.href
         ).href;
     }
 
-    /*
-     * Nouveau format recommandé :
-     * "actu1.jpg"
-     */
     return new URL(
         `../assets/images/${image}`,
         window.location.href
     ).href;
 }
 
+function getSlideDuration(item) {
+    const durationInSeconds =
+        Number(
+            item.duree ??
+            item.duration
+        );
+
+    if (
+        !Number.isFinite(durationInSeconds) ||
+        durationInSeconds <= 0
+    ) {
+        return DEFAULT_SLIDE_DURATION;
+    }
+
+    return Math.max(
+        durationInSeconds * 1000,
+        MIN_SLIDE_DURATION
+    );
+}
+
 function displayNews(index) {
-    const currentNews = news[index];
+    const currentNews =
+        displayNewsList[index];
 
     if (!currentNews) {
         return;
@@ -123,11 +204,23 @@ function displayNews(index) {
         currentNews.photo ||
         "";
 
-    newsCategory.textContent = category;
-    newsTitle.textContent = title;
-    newsText.textContent = text;
+    const qrCodeUrl =
+    currentNews.qrCode ||
+    currentNews.qrcode ||
+    currentNews.qr_code ||
+    "";
 
-    const imageUrl = getImageUrl(image);
+    newsCategory.textContent =
+        category;
+
+    newsTitle.textContent =
+        title;
+
+    newsText.textContent =
+        text;
+
+    const imageUrl =
+        getImageUrl(image);
 
     if (imageUrl) {
         newsVisual.style.setProperty(
@@ -141,20 +234,92 @@ function displayNews(index) {
         );
     }
 
+    displayQrCode(qrCodeUrl);
+
     restartKenBurns();
     updatePagination();
 }
 
+function displayQrCode(url) {
+    if (
+        !newsQrCodeWrapper ||
+        !newsQrCode
+    ) {
+        return;
+    }
+
+    newsQrCode.innerHTML = "";
+
+    if (!isValidQrCodeUrl(url)) {
+        newsQrCodeWrapper.hidden = true;
+        newsVisual.classList.remove(
+            "has-qrcode"
+);
+        return;
+    }
+
+    if (typeof QRCode === "undefined") {
+        console.error(
+            "La bibliothèque QRCode n’est pas chargée."
+        );
+
+        newsQrCodeWrapper.hidden = true;
+        return;
+    }
+
+    newsQrCodeWrapper.hidden = false;
+
+    newsVisual.classList.add(
+    "has-qrcode"
+    );
+    
+    new QRCode(newsQrCode, {
+        text: url,
+        width: 156,
+        height: 156,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel:
+            QRCode.CorrectLevel.H
+    });
+}
+
+function isValidQrCodeUrl(value) {
+    if (
+        typeof value !== "string" ||
+        value.trim() === ""
+    ) {
+        return false;
+    }
+
+    try {
+        const url = new URL(
+            value.trim()
+        );
+
+        return (
+            url.protocol === "https:" ||
+            url.protocol === "http:"
+        );
+    } catch (error) {
+        return false;
+    }
+}
+
 function restartKenBurns() {
-    newsVisual.classList.remove("ken-burns");
+    newsVisual.classList.remove(
+        "ken-burns"
+    );
 
     void newsVisual.offsetWidth;
 
-    newsVisual.classList.add("ken-burns");
+    newsVisual.classList.add(
+        "ken-burns"
+    );
 }
 
 function showNextNews() {
-    if (news.length <= 1) {
+    if (displayNewsList.length <= 1) {
         return;
     }
 
@@ -162,21 +327,24 @@ function showNextNews() {
 
     setTimeout(() => {
         currentNewsIndex =
-            (currentNewsIndex + 1) % news.length;
+            (currentNewsIndex + 1) %
+            displayNewsList.length;
 
         displayNews(currentNewsIndex);
         fadeIn(newsVisual);
+        scheduleNextNews();
     }, 500);
 }
 
 function showNews(index) {
     if (
         index === currentNewsIndex ||
-        !news[index]
+        !displayNewsList[index]
     ) {
         return;
     }
 
+    stopSlideshow();
     fadeOut(newsVisual);
 
     setTimeout(() => {
@@ -184,26 +352,36 @@ function showNews(index) {
 
         displayNews(currentNewsIndex);
         fadeIn(newsVisual);
-        startSlideshow();
+        scheduleNextNews();
     }, 500);
 }
 
-function startSlideshow() {
+function scheduleNextNews() {
     stopSlideshow();
 
-    if (news.length <= 1) {
+    if (displayNewsList.length <= 1) {
         return;
     }
 
-    slideshowTimer = setInterval(
+    const currentNews =
+        displayNewsList[currentNewsIndex];
+
+    const currentDuration =
+        getSlideDuration(currentNews);
+
+    slideshowTimer = setTimeout(
         showNextNews,
-        SLIDE_DURATION
+        currentDuration
     );
+}
+
+function startSlideshow() {
+    scheduleNextNews();
 }
 
 function stopSlideshow() {
     if (slideshowTimer) {
-        clearInterval(slideshowTimer);
+        clearTimeout(slideshowTimer);
         slideshowTimer = null;
     }
 }
@@ -211,28 +389,40 @@ function stopSlideshow() {
 function createPagination() {
     newsPagination.innerHTML = "";
 
-    news.forEach((item, index) => {
-        const dot = document.createElement("button");
+    displayNewsList.forEach(
+        (item, index) => {
+            const dot =
+                document.createElement(
+                    "button"
+                );
 
-        dot.className = "news-dot";
-        dot.type = "button";
+            dot.className = "news-dot";
+            dot.type = "button";
 
-        dot.setAttribute(
-            "aria-label",
-            `Afficher l’actualité ${index + 1}`
-        );
+            dot.setAttribute(
+                "aria-label",
+                `Afficher l’actualité ${index + 1}`
+            );
 
-        dot.addEventListener("click", () => {
-            showNews(index);
-        });
+            dot.addEventListener(
+                "click",
+                () => {
+                    showNews(index);
+                }
+            );
 
-        newsPagination.appendChild(dot);
-    });
+            newsPagination.appendChild(
+                dot
+            );
+        }
+    );
 }
 
 function updatePagination() {
     const dots =
-        newsPagination.querySelectorAll(".news-dot");
+        newsPagination.querySelectorAll(
+            ".news-dot"
+        );
 
     dots.forEach((dot, index) => {
         dot.classList.toggle(
@@ -240,19 +430,26 @@ function updatePagination() {
             index === currentNewsIndex
         );
     });
-window.addEventListener("storage", (event) => {
-    if (event.key !== STORAGE_KEY) {
-        return;
-    }
+}
 
-    stopSlideshow();
-    loadNews();
-});
+window.addEventListener(
+    "storage",
+    (event) => {
+        if (event.key !== STORAGE_KEY) {
+            return;
+        }
 
-document.addEventListener("visibilitychange", () => {
-    if (!document.hidden) {
         stopSlideshow();
         loadNews();
     }
-});
-}
+);
+
+document.addEventListener(
+    "visibilitychange",
+    () => {
+        if (!document.hidden) {
+            stopSlideshow();
+            loadNews();
+        }
+    }
+);

@@ -318,3 +318,42 @@ button {
         min-height: 220px;
     }
 }
+.checkbox-field {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 1px solid #d3d3d3;
+    border-radius: 8px;
+    background: #f7f7f7;
+    cursor: pointer;
+}
+
+.checkbox-field input {
+    width: 20px;
+    height: 20px;
+    flex: 0 0 auto;
+    accent-color: #ffd200;
+}
+
+.checkbox-field span {
+    font-weight: 800;
+    color: #111;
+}
+
+.news-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-top: 14px;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.priority-badge {
+    padding: 6px 10px;
+    border-radius: 20px;
+    background: #ffd200;
+    color: #000;
+}

@@ -9,6 +9,13 @@ const titleInput =
     document.getElementById("news-title-input");
 const textInput =
     document.getElementById("news-text-input");
+const durationInput =
+    document.getElementById("news-duration-input");
+
+const priorityInput =
+    document.getElementById("news-priority-input");
+const qrCodeInput =
+    document.getElementById("news-qrcode-input");
 const imageInput =
     document.getElementById("news-image-input");
 
@@ -84,19 +91,51 @@ function createId() {
 }
 
 function normalizeNewsItem(item) {
+    const duration = Number(
+        item.duree ??
+        item.duration ??
+        10
+    );
+
     return {
         id: item.id || createId(),
-        titre: item.titre || item.title || "",
+
+        titre:
+            item.titre ||
+            item.title ||
+            "",
+
         categorie:
             item.categorie ||
             item.category ||
             "Actualité",
+
         texte:
             item.texte ||
             item.text ||
             item.description ||
             "",
-        image: item.image || ""
+
+        qrCode:
+            item.qrCode ||
+            item.qrcode ||
+            item.qr_code ||
+            "",
+
+        image:
+            item.image ||
+            "",
+
+        duree:
+            Number.isFinite(duration) && duration >= 3
+                ? duration
+                : 10,
+
+        prioritaire:
+            item.prioritaire === true ||
+            item.priority === true ||
+            item.prioritaire === "true" ||
+            item.priority === "true"
     };
 }
 
@@ -167,6 +206,21 @@ function renderNewsList() {
                 <p class="news-card-text">
                     ${escapeHtml(item.texte)}
                 </p>
+                <div class="news-card-meta">
+                    <span>
+                        ⏱ ${item.duree} s
+                    </span>
+
+                    ${
+                        item.prioritaire
+                            ? `
+                                <span class="priority-badge">
+                                    ★ Prioritaire
+                                </span>
+                            `
+                            : ""
+                    }
+                </div>
 
                 <div class="news-card-actions">
                     <button
@@ -277,10 +331,28 @@ newsForm.addEventListener("submit", (event) => {
     const titre = titleInput.value.trim();
     const categorie = categoryInput.value.trim();
     const texte = textInput.value.trim();
+    const duree = Number(durationInput.value);
+    const prioritaire = priorityInput.checked;
+    const qrCode = qrCodeInput
+        ? qrCodeInput.value.trim()
+        : "";
 
     if (!titre || !categorie || !texte) {
         showStatus(
             "Tous les champs de texte sont obligatoires.",
+            "error"
+        );
+
+        return;
+    }
+
+    if (
+        !Number.isFinite(duree) ||
+        duree < 3 ||
+        duree > 300
+    ) {
+        showStatus(
+            "La durée doit être comprise entre 3 et 300 secondes.",
             "error"
         );
 
@@ -306,6 +378,9 @@ newsForm.addEventListener("submit", (event) => {
             titre,
             categorie,
             texte,
+            duree,
+            prioritaire,
+            qrCode,
             image:
                 selectedImage ||
                 news[index].image ||
@@ -322,7 +397,10 @@ newsForm.addEventListener("submit", (event) => {
             titre,
             categorie,
             texte,
-            image: selectedImage
+            image: selectedImage,
+            duree,
+            prioritaire,
+            qrCode
         });
 
         showStatus(
@@ -331,9 +409,18 @@ newsForm.addEventListener("submit", (event) => {
         );
     }
 
-    saveNews();
-    renderNewsList();
-    resetForm();
+    try {
+        saveNews();
+        renderNewsList();
+        resetForm();
+    } catch (error) {
+        console.error(error);
+
+        showStatus(
+            "Impossible d’enregistrer l’actualité.",
+            "error"
+        );
+    }
 });
 
 cancelEditButton.addEventListener("click", () => {
@@ -383,6 +470,13 @@ function startEdit(index) {
     categoryInput.value = item.categorie;
     titleInput.value = item.titre;
     textInput.value = item.texte;
+    durationInput.value = item.duree;
+    priorityInput.checked = item.prioritaire;
+    qrCodeInput.value =
+        item.qrCode ||
+        item.qrcode ||
+        item.qr_code ||
+        "";
 
     formHeading.textContent =
         "Modifier l’actualité";
@@ -446,10 +540,11 @@ function moveNews(fromIndex, toIndex) {
 
 function resetForm() {
     newsForm.reset();
-
+    durationInput.value = 10;
+    priorityInput.checked = false;
     currentEditId = null;
     selectedImage = "";
-
+    qrCodeInput.value = "";
     newsIdInput.value = "";
     formHeading.textContent =
         "Ajouter une actualité";

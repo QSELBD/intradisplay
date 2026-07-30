@@ -41,6 +41,30 @@
 
         </header>
 
+    <div class="info-bar">
+
+        <div class="current-date" id="current-date">
+            Chargement de la date…
+        </div>
+
+        <div class="weather" id="weather">
+
+            <span class="weather-icon" id="weather-icon">
+                —
+            </span>
+
+            <span class="weather-temperature" id="weather-temperature">
+                -- °C
+            </span>
+
+            <span class="weather-description" id="weather-description">
+                Fontanil-Cornillon
+            </span>
+
+        </div>
+
+    </div>
+
         <section class="news">
 
             <div
@@ -71,6 +95,26 @@
                     </p>
 
                 </div>
+                <div class="news-content">
+                    <!-- ton contenu actuel -->
+                </div>
+
+                <aside
+                    class="news-qrcode"
+                    id="news-qrcode-wrapper"
+                    hidden
+                >
+                    <div id="news-qrcode"></div>
+
+                    <p>
+                        Scannez pour en savoir plus
+                    </p>
+                </aside>
+
+                <div
+                    id="news-pagination"
+                    class="news-pagination"
+                ></div>
 
                 <div class="news-pagination" id="news-pagination"></div>
 
@@ -102,7 +146,11 @@
 
     <script src="../assets/js/clock.js"></script>
     <script src="../assets/js/ui.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"
+    ></script>
     <script src="../assets/js/slideshow.js"></script>
+    <script src="../assets/js/weather.js"></script>
     <script src="../assets/js/app.js"></script>
 
 </body>
